@@ -1,0 +1,95 @@
+[Project]
+Directory=C:\USERS\DFMOBILE\DESKTOP\FIM\
+Description=RELOGIO
+List File=RELOGIO.LST
+Map File=RELOGIO.MAP
+HEX File=RELOGIO.HEX
+[Include Path]
+Line1=.
+[Linker]
+Load Mode=1
+Resets=62
+Load Hex On Link=1
+Load Symbols On Link=1
+Export All Symbols=1
+Export Comments=1
+[Simulator]
+Execution Block Size=100000
+TI Delay=0
+RI Delay=1
+Indirect MOVX=-1
+Reset PC To=0
+UART0 Port=0
+UART1 Port=0
+UART2 Port=0
+UART3 Port=0
+UART0 Baud=9600
+UART1 Baud=9600
+UART2 Baud=9600
+UART3 Baud=9600
+Memory Architecture=0
+Break on NOPs=10
+Undefined Instruction=0
+[Assembler]
+Case Insensitive=0
+[CPU Settings]
+CPU Type=2
+MHZ=12000000
+[Keypad Configuration]
+Line Select 1=0
+Line Select 2=0
+Line Select 3=0
+Line Select 4=0
+Column Values 1=0
+Column Values 2=0
+Column Values 3=0
+Column Values 4=0
+Column Values 5=0
+Line Selection=0
+Keypress Generates=0
+[I2C]
+SDA1=-1
+SCL1=-1
+SDA2=-1
+SCL2=-1
+[SPI]
+SDIN1=-1
+SDOUT1=-1
+SCLK1=-1
+SDIN2=-1
+SDOUT2=-1
+SCLK2=-1
+[Serial EEPROM]
+I2C Bus=-1
+I2C Address=0
+[Serial RTC DS1307]
+I2C Bus=-1
+I2C Address=104
+[Serial Dual Pot DS1803]
+I2C Bus=-1
+I2C Address=0
+Default Low 0=0
+Default High 0=0
+Default Low 1=0
+Default High 1=0
+[MAX147]
+SPI Bus=-1
+Slave Select Line=-1
+Channel 0=CH0
+Channel 1=CH0
+Channel 2=CH0
+Channel 3=CH0
+Channel 4=CH0
+Channel 5=CH0
+Channel 6=CH0
+Channel 7=CH0
+COM= 0
+VREF= 2000
+[Code Segments]
+Line1=.CODE=0000h,CSEG
+[Xram Segments]
+Line1=.XRAM=0000h,XSEG
+[Iram Segments]
+Line1=.IRAM=30h,DSEG,ISEG
+[Bit Segments]
+Line1=.BIT=00h,BSEG

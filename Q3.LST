@@ -1,0 +1,259 @@
+1    0000 ;ESCOLA POLITECNICA DE PERNAMBUCO
+2    0000 ;ALUNO DAVIDSON FELLIPE DA SILVA
+3    0000 ;CURSO ENG. DA COMPUTACAO | PROF. DANIEL CHAVES
+4    0000 ;QUESTAO 3 DA PROVA DE PROTOTIPACAO DE CI | RELOGIO DIGITAL UTILIZADO ASSEMBLY DO MICROCONTROLADOR 8051
+5    0000 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+6    0000 ;R0 DEFINIÇÃO DO REGISTRADOR UTILIZADO NA UNIDADE DE SEGUNDO
+7    0000 ;R1 DEFINIÇÃO DO REGISTRADOR UTILIZADO NA DEZENA DE SEGUNDO
+8    0000 ;R2 DEFINIÇÃO DO REGISTRADOR UTILIZADO NA UNIDADE DE MINUTO
+9    0000 ;R3 DEFINIÇÃO DO REGISTRADOR UTILIZADO NA DEZENA DE MINUTO
+10   0000 ;R4 DEFINIÇÃO DO REGISTRADOR UTILIZADO NA UNIDADE DE HORA
+11   0000 ;R5 DEFINIÇÃO DO REGISTRADOR UTILIZADO NA DEZENA DE HORA
+12   0000 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+13   0000 TEMPORIZADOR1	EQU TR0	
+14   0000 TEMPORIZADOR1_H	EQU TH0	
+15   0000 TEMPORIZADOR1_L	EQU TL0	
+16   0000 TEMPORIZADOR1_F	EQU TF0	
+17   0000 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+18   0000 DISPLAY_1	EQU P2.0
+19   0000 DISPLAY_2	EQU P2.1
+20   0000 DISPLAY_3	EQU P2.2
+21   0000 DISPLAY_4	EQU P2.3
+22   0000 DISPLAY_5	EQU P2.4
+23   0000 DISPLAY_6	EQU P2.5
+24   0000 DISPLAY_7	EQU P2.6
+25   0000 org 0
+26   0000 MOV TMOD, #51h						;CONFIGURACAO DO TMOD #00110011
+27   0003 DECODER: DB 03Fh, 06h, 05Bh, 04Fh, 66h, 06Dh, 07Dh, 07h, 06Fh ;CONFIGURACAO PARA O DISPLAY DE SETE SEGMENTOS:
+28   000C 																			  ;DIGITOS: 0,1,2,3,4,5,6,7,8,9,DESLIGADO									
+29   000C MOV P2, #0h				;desabilita todos os displays
+30   000F SETB DISPLAY_1			;habilita somente o display da unidade de segundo
+31   0011 MOV DPTR, #DECODER		;move as definicoes para configuracao dos valores do display para o DPTR
+33   0014 JMP INICIO_RELOGIO		;inicia o relogio
+35   0017 EXIBE_RELOGIO: JB DISPLAY_1, EXIBE_UNIDADE_SEGUNDO	;multiplexacao dos displays 
+36   001A 			   JB DISPLAY_2, EXIBE_DEZENA_SEGUNDO	;
+37   001D 			   JB DISPLAY_3, EXIBE_UNIDADE_MINUTO	;
+38   0020 			   JB DISPLAY_4, EXIBE_DEZENA_MINUTO	;
+39   0023 			   JB DISPLAY_5, EXIBE_UNIDADE_HORA		;
+40   0026 			   JB DISPLAY_6, EXIBE_DEZENA_HORA	    ;
+41   0029 EXIBE_UNIDADE_SEGUNDO:
+42   0029 				CLR DISPLAY_1		;habilita o novo display
+43   002B 				SETB DISPLAY_2		;a ser aceso
+44   002D 				MOV A, R0			;checagem com a tabela de decodificacao
+45   002E 				MOVC A, @A+DPTR		;SOMA A + DPTR OBTENDO UM ENDEREÇO DE 16 BITS NA MEMÓRIA DE PROGRAMA E CARREGA O ACUMULADOR COM ESTA MEMORIA
+46   002F 				MOV P1, A			;coloca o dado no barramento do display
+47   0031 				LCALL DELAY_10ms	;DEVERA PERMANECER 10ms ACESO
+48   0034 				MOV P1, #0h			;APAGA RELOGIO																								
+49   0037 				JMP EXIBE_RELOGIO
+50   003A EXIBE_DEZENA_SEGUNDO:
+51   003A 				CLR DISPLAY_2		;habilita o novo display
+52   003C 				SETB DISPLAY_3      ;a ser aceso
+53   003E 				MOV A, R1           ;checagem com a tabela de decodificacao
+54   003F 				MOVC A, @A+DPTR     ;SOMA A + DPTR OBTENDO UM ENDEREÇO DE 16 BITS NA MEMÓRIA DE PROGRAMA E CARREGA O ACUMULADOR COM ESTA MEMORIA
+55   0040 				MOV P1, A           ;coloca o dado no barramento do display
+56   0042 				LCALL DELAY_10ms	;DEVERA PERMANECER 10ms ACESO
+57   0045 				MOV P1, #0h			;APAGA RELOGIO																								;APAGA RELOGIO
+58   0048 				JMP EXIBE_RELOGIO   
+59   004B EXIBE_UNIDADE_MINUTO:
+60   004B 				CLR DISPLAY_3		;habilita o novo display
+61   004D 				SETB DISPLAY_4      ;a ser aceso
+62   004F 				MOV A, R2           ;checagem com a tabela de decodificacao
+63   0050 				MOVC A, @A+DPTR     ;SOMA A + DPTR OBTENDO UM ENDEREÇO DE 16 BITS NA MEMÓRIA DE PROGRAMA E CARREGA O ACUMULADOR COM ESTA MEMORIA
+64   0051 				MOV P1, A           ;coloca o dado no barramento do display
+65   0053 				LCALL DELAY_10ms	;DEVERA PERMANECER 10ms ACESO
+66   0056 				MOV P1, #0h			;APAGA RELOGIO																								;APAGA RELOGIO
+67   0059 				JMP EXIBE_RELOGIO				
+68   005C EXIBE_DEZENA_MINUTO:
+69   005C 				CLR DISPLAY_4		;habilita o novo display
+70   005E 				SETB DISPLAY_5      ;a ser aceso
+71   0060 				MOV A, R3           ;checagem com a tabela de decodificacao
+72   0061 				MOVC A, @A+DPTR     ;SOMA A + DPTR OBTENDO UM ENDEREÇO DE 16 BITS NA MEMÓRIA DE PROGRAMA E CARREGA O ACUMULADOR COM ESTA MEMORIA
+73   0062 				MOV P1, A           ;coloca o dado no barramento do display
+74   0064 				LCALL DELAY_10ms	;DEVERA PERMANECER 10ms ACESO
+75   0067 				MOV P1, #0h			;APAGA RELOGIO																								;APAGA RELOGIO
+76   006A 				JMP EXIBE_RELOGIO				
+77   006D EXIBE_UNIDADE_HORA:
+78   006D 				CLR DISPLAY_5		;habilita o novo display
+79   006F 				SETB DISPLAY_6      ;a ser aceso
+80   0071 				MOV A, R4           ;checagem com a tabela de decodificacao
+81   0072 				MOVC A, @A+DPTR     ;SOMA A + DPTR OBTENDO UM ENDEREÇO DE 16 BITS NA MEMÓRIA DE PROGRAMA E CARREGA O ACUMULADOR COM ESTA MEMORIA
+82   0073 				MOV P1, A           ;coloca o dado no barramento do display
+83   0075 				LCALL DELAY_10ms	;DEVERA PERMANECER 10ms ACESO
+84   0078 				MOV P1, #0h			;APAGA RELOGIO																								;APAGA RELOGIO
+85   007B 				JMP EXIBE_RELOGIO				
+86   007E EXIBE_DEZENA_HORA:
+87   007E 				CLR DISPLAY_6		;habilita o novo display
+88   0080 				SETB DISPLAY_1      ;a ser aceso
+89   0082 				MOV A, R5           ;checagem com a tabela de decodificacao
+90   0083 				MOVC A, @A+DPTR     ;SOMA A + DPTR OBTENDO UM ENDEREÇO DE 16 BITS NA MEMÓRIA DE PROGRAMA E CARREGA O ACUMULADOR COM ESTA MEMORIA
+91   0084 				MOV P1, A           ;coloca o dado no barramento do display
+92   0086 				LCALL DELAY_10ms	;DEVERA PERMANECER 10ms ACESO
+93   0089 				MOV P1, #0h			;APAGA RELOGIO																								;APAGA RELOGIO
+94   008C 				JMP INCREMENTA_UNIDADE_SEGUNDO
+95   008F ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+96   008F INICIO_RELOGIO: LCALL CLEAR_RELOGIO
+97   0092 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+98   0092 EXECUCAO_RELOGIO:  				
+99   0092 				   JNB P0.7, ATUALIZAR_RELOGIO ;PRESET DO RELOGIO	   				   
+100  0095 				   LCALL DELAY_1_SEGUNDO	   ;toda a execucao do relogio e baseada neste delay de 1 segundo			   
+101  0098 				   JMP EXIBE_RELOGIO		   ;exibe o relogio no display
+102  009B CHECA_UNIDADE_SEGUNDO: 
+103  009B 					   CJNE R0, #10, EXECUCAO_RELOGIO	;checa se a unidade de segundo e diferente de 10
+104  009E 					   MOV R0, #0					   	;se for a execucao do relogio prossegue, caso contrario 
+105  00A0 					   JMP INCREMENTA_DEZENA_SEGUNDO	;zera a unidade de segundo e incrementa a dezena de segundo
+106  00A3 INCREMENTA_UNIDADE_SEGUNDO:
+107  00A3 					   INC R0							;incrementa a unidade de segundo
+108  00A4 					   JMP CHECA_24_HORAS				;checa se chegou 23h59m59s
+109  00A7 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+110  00A7 CHECA_DEZENA_SEGUNDO:					   
+111  00A7 					CJNE R1, #6, EXECUCAO_RELOGIO		;checa se a dezena de segundo e diferente de 6
+112  00AA 					MOV R1, #0                          ;se for a execucao do relogio prossegue, caso contrario 
+113  00AC 					JMP INCREMENTA_UNIDADE_MINUTO       ;zera a dezena de segundo e incrementa a unidade de minuto
+114  00AF INCREMENTA_DEZENA_SEGUNDO:                            
+115  00AF 					   INC R1							;incrementa a dezena de segundo
+116  00B0 					   JMP CHECA_DEZENA_SEGUNDO			;verifica o valor da dezena de segundo
+117  00B3 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+118  00B3 CHECA_UNIDADE_MINUTO:					   
+119  00B3 					CJNE R2, #10, EXECUCAO_RELOGIO	;checa se a unidade de minuto e diferente de 10
+120  00B6 					MOV R2, #0                      ;se for a execucao do relogio prossegue, caso contrario 
+121  00B8 					JMP INCREMENTA_DEZENA_MINUTO    ;zera a unidade de segundo e incrementa a dezena de minuto
+122  00BB INCREMENTA_UNIDADE_MINUTO:                        
+123  00BB 					   INC R2						;incrementa a unidade de minuto
+124  00BC 					   JMP CHECA_UNIDADE_MINUTO		;verifica o valor da unidade de minuto
+125  00BF ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+126  00BF CHECA_DEZENA_MINUTO:					   
+127  00BF 					CJNE R3, #6, EXECUCAO_RELOGIO	;checa se a dezena de minuto e diferente de 6
+128  00C2 					MOV R3, #0                      ;se for a execucao do relogio prossegue, caso contrario 
+129  00C4 					JMP INCREMENTA_UNIDADE_HORA     ;zera a unidade de segundo e incrementa a unidade de hora
+130  00C7 INCREMENTA_DEZENA_MINUTO:                         
+131  00C7 					   INC R3						;incrementa a dezena de minuto
+132  00C8 					   JMP CHECA_DEZENA_MINUTO		;verifica o valor da dezena de minuto
+133  00CB ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+134  00CB CHECA_UNIDADE_HORA:					   
+135  00CB 					CJNE R4, #10, EXECUCAO_RELOGIO	;checa se a unidade de hora e diferente de 10
+136  00CE 					MOV R4, #0                      ;se for a execucao do relogio prossegue, caso contrario 
+137  00D0 					JMP INCREMENTA_DEZENA_HORA      ;zera a unidade de hora e incrementa a dezena de hora
+138  00D3 INCREMENTA_UNIDADE_HORA:                          
+139  00D3 					   INC R4						;incrementa a unidade de hora
+140  00D4 					   JMP CHECA_UNIDADE_HORA		;verifica o valor da unidade de hora
+141  00D7 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+142  00D7 INCREMENTA_DEZENA_HORA:
+143  00D7 					   INC R5						;incrementa a dezena de hora
+144  00D8 					   JMP EXECUCAO_RELOGIO			;reinicia a execucao do relogio
+145  00DB ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+146  00DB CHECA_24_HORAS: 									;rotina para checa se a hora do relogio chegou a 
+147  00DB 				CJNE R0, #9, CHECA_UNIDADE_SEGUNDO	;23h59m59s
+148  00DE 				CJNE R1, #5, CHECA_UNIDADE_SEGUNDO 	;caso chegue o relogio
+149  00E1 				CJNE R2, #9, CHECA_UNIDADE_SEGUNDO  ;sera reiniciado
+150  00E4 				CJNE R3, #5, CHECA_UNIDADE_SEGUNDO	;
+151  00E7 				CJNE R4, #3, CHECA_UNIDADE_SEGUNDO	;
+152  00EA 				CJNE R5, #2, CHECA_UNIDADE_SEGUNDO	;
+153  00ED 			    JMP INICIO_RELOGIO					;
+154  00F0 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;			   
+155  00F0 ATUALIZAR_RELOGIO:									;rotina utizada para a modificacao de 
+156  00F0 		LCALL DELAY_300ms							;valores para o preset do relogio (ha um delay para controlar a incrementacao)
+157  00F3 		JNB P0.0, INC_MINUTOS 						;onde: caso setado p0.0 incrementa os minutos
+158  00F6 		JNB P0.1, DEC_MINUTOS 						;caso setado p0.1 decrementa os minutos
+159  00F9 		JNB P0.2, INC_HORA							;caso setado o p0.2 incrementa as horas
+160  00FC 		JNB P0.3, DEC_HORA							;caso setado o p0.3 decrementa as horas
+161  00FF 		JMP EXECUCAO_RELOGIO						;somente uma das opcoes sera realizada por vez
+162  0102 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+163  0102 INC_MINUTOS:
+164  0102 			INC R2						;INCREMENTA A UNIDADE DE MINUTO
+165  0103 			CJNE R2, #10, SAIR_PRESET	
+166  0106 			JMP INC_DEZENA_MINUTO		
+167  0109 INC_DEZENA_MINUTO: 
+168  0109 			MOV R2, #0		
+169  010B 			INC R3 						;INCREMENTA A DEZENA DE MINUTO
+170  010C 			CJNE R3, #6, SAIR_PRESET	;CASO CHEGUE A 60m SERA SETADO PARA 0(DEZENA_MINUTO) E 0(UNIDADE_MINUTO)
+171  010F 			MOV R3, #0
+172  0111 			JMP SAIR_PRESET
+173  0114 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+174  0114 DEC_MINUTOS:
+175  0114 			DEC R2						;DECREMENTAR A UNIDADE DE MINUTO
+176  0115 			CJNE R2, #0FFh, SAIR_PRESET
+177  0118 			JMP DEC_DEZENA_MINUTO
+178  011B DEC_DEZENA_MINUTO: 
+179  011B 			MOV R2, #9		
+180  011D 			DEC R3 						;DECREMENTAR A DEZENA DE MINUTO
+181  011E 			CJNE R3, #0FFh, SAIR_PRESET ;CASO CHEGUE A FFFFm SERA SETADO PARA 5(DEZENA_MINUTO) E 9(UNIDADE_MINUTO)
+182  0121 			MOV R3, #5
+183  0123 			JMP SAIR_PRESET
+184  0126 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+185  0126 INC_HORA:
+186  0126 			INC R4								;INCREMENTA A UNIDADE DE HORA
+187  0127 			JMP CHECA_PRESET_24_HORAS
+188  012A INCREMENTA_OK:
+189  012A 			CJNE R4, #10, SAIR_PRESET
+190  012D 			JMP INC_DEZENA_HORA
+191  0130 INC_DEZENA_HORA: 
+192  0130 			MOV R4, #0							
+193  0132 			INC R5								;INCREMENTA A DEZENA DE HORA
+194  0133 		    JMP SAIR_PRESET
+195  0136 CHECA_PRESET_24_HORAS: 
+196  0136 				CJNE R5, #2, INCREMENTA_OK		;CASO CHEGUE A 24hORAS SERA SETADO PARA 0(DEZENA_HORA) E 0(UNIDADE_HORA)
+197  0139 				CJNE R4, #4, INCREMENTA_OK
+198  013C 				MOV R5, #0h
+199  013E 				MOV R4, #0h
+200  0140 			    JMP SAIR_PRESET
+201  0143 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+202  0143 DEC_HORA:
+203  0143 			DEC R4								;DECREMENTAR A UNIDADE DE HORA
+204  0144 			CJNE R4, #0FFh, SAIR_PRESET				
+205  0147 			JMP DEC_DEZENA_HORA
+206  014A DEC_DEZENA_HORA: 
+207  014A 			MOV R4, #9		
+208  014C 			DEC R5 								;DECREMENTAR A DEZENA DE HORA
+209  014D 			CJNE R5, #0FFh, SAIR_PRESET			;CASO CHEGUE A FFFFhORAS SERA SETADO PARA 2(DEZENA_HORA) E 3(UNIDADE_HORA)
+210  0150 			MOV R5, #2
+211  0152 			MOV R4, #3
+212  0154 			JMP SAIR_PRESET
+213  0157 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;			
+214  0157 SAIR_PRESET: JMP ATUALIZAR_RELOGIO
+215  015A ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+216  015A DELAY_1_SEGUNDO: 
+217  015A 				MOV R6, #20 	  ;MOVE O DECIMAL 20 PARA O REGISTRADOR R0
+218  015C REPETE: 
+219  015C 		MOV TEMPORIZADOR1_H, #048h ;CARREGAR NO TEMPORIZADOR O VALOR DE #18535 	
+220  015F         MOV TEMPORIZADOR1_L, #067h ;O QUE EQUIVALE A 4867 EM HEXADECIMAL 
+221  0162         SETB TEMPORIZADOR1		   ;LIGA O TEMPORIZADOR
+222  0164         JNB TEMPORIZADOR1_F, $ 	   ;ENQUANTO A CONTAGEM DE 18535 A 65535 NAO TERMINE FIQUE AQUI, CADA CICLO DURA 47ms       
+223  0167         CLR TEMPORIZADOR1_F 	   ;RESETA O FLAG DO TIMER T1
+224  0169         DJNZ R6, REPETE			   ;IRA EXECUTAR A ROTINA ROTINA REPETE POR 20 VEZES
+225  016B 	    CLR TEMPORIZADOR1          ;DESLIGA O TEMPORIZADOR
+226  016D 	    RET						   ;SAI DA DELAY_1_SEGUNDO ( 940ms + 60ms do atraso dos displays )
+227  016E ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	    
+228  016E DELAY_300ms: 
+229  016E 			MOV R6, #6 	           ;MOVE O DECIMAL 6 PARA O REGISTRADOR R0
+230  0170 LACO_300ms: 
+231  0170 		MOV TEMPORIZADOR1_H, #03Ch ;CARREGAR NO TEMPORIZADOR O VALOR DE #15535 	
+232  0173         MOV TEMPORIZADOR1_L, #0AFh ;O QUE EQUIVALE A 3CAF EM HEXADECIMAL 
+233  0176         SETB TEMPORIZADOR1		   ;LIGA O TEMPORIZADOR
+234  0178         JNB TEMPORIZADOR1_F, $ 	   ;ENQUANTO A CONTAGEM DE 15535 A 65535 NAO TERMINE FIQUE AQUI, CADA CICLO DURA 50ms       
+235  017B         CLR TEMPORIZADOR1_F 	   ;RESETA O FLAG DO TIMER T1
+236  017D         DJNZ R6, LACO_300ms		   ;IRA EXECUTAR A ROTINA ROTINA LACO_300ms POR 6 VEZES
+237  017F 	    CLR TEMPORIZADOR1          ;DESLIGA O TEMPORIZADOR
+238  0181 	    RET						   ;SAI DA DELAY_300ms, E TEREMOS 300ms DE DELAY
+240  0182 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	    
+241  0182 DELAY_10ms: 
+242  0182 		MOV TEMPORIZADOR1_H, #0D8h ;CARREGAR NO TEMPORIZADOR O VALOR DE #55535 	
+243  0185         MOV TEMPORIZADOR1_L, #0EFh ;O QUE EQUIVALE A D8EF EM HEXADECIMAL 
+244  0188         SETB TEMPORIZADOR1		   ;LIGA O TEMPORIZADOR
+245  018A         JNB TEMPORIZADOR1_F, $ 	   ;ENQUANTO A CONTAGEM DE 55535 A 65535 NAO TERMINE FIQUE AQUI
+246  018D         CLR TEMPORIZADOR1_F 	   ;RESETA O FLAG DO TIMER T1
+247  018F 	    CLR TEMPORIZADOR1          ;DESLIGA O TEMPORIZADOR
+248  0191 	    RET						   ;SAI DA DELAY_10ms, E TEREMOS 10ms DE DELAY	    
+249  0192 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	    
+250  0192 PARAR_TEMPORIZADOR_1: 
+251  0192 		CLR TEMPORIZADOR1	  ;DESLIGA O TEMPORIZADOR
+252  0194 		RET
+253  0195 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	    
+254  0195 CLEAR_RELOGIO: MOV R0, #0			;UTILIZADA PARA RESETAR O RELOGIO
+255  0197 			   MOV R1, #0			;
+256  0199 			   MOV R2, #0			;
+257  019B 			   MOV R3, #0			;
+258  019D 			   MOV R4, #0			;
+259  019F 			   MOV R5, #0			;  
+260  01A1 			   RET				   
+261  01A2 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;			   
+262  01A2 SAIR_DO_PROGRAMA: 					;TERMINA A EXECUCAO

@@ -1,0 +1,15 @@
+PINNACLE 52 LINKER MAP FILE
+
+Output File: C:\USERS\DFMOBILE\DESKTOP\NOVAPA~1\PROVA_~1\APRESE~1\Q3.HEX
+
+RELOCATABLE SEGMENTS:
+
+      SEGMENT  START   END   TOTAL
+TYPE   NAME     ADDR  ADDR  LENGTH
+----  -------- ----- -----  ------
+
+PUBLIC SYMBOLS:
+
+  
+*   VALUE   SYMBOL NAME  
+- --------- -------------------------
